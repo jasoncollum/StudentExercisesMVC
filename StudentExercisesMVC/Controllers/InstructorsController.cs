@@ -98,7 +98,7 @@ namespace StudentExercisesMVC.Controllers
                         cmd.Parameters.Add(new SqlParameter("@firstName", instructor.FirstName));
                         cmd.Parameters.Add(new SqlParameter("@lastName", instructor.LastName));
                         cmd.Parameters.Add(new SqlParameter("@slackHandle", instructor.SlackHandle));
-                        cmd.Parameters.Add(new SqlParameter("@slackHandle", instructor.Specialty));
+                        cmd.Parameters.Add(new SqlParameter("@specialty", instructor.Specialty));
                         cmd.Parameters.Add(new SqlParameter("@cohortId", instructor.CohortId));
 
                         cmd.ExecuteNonQuery();

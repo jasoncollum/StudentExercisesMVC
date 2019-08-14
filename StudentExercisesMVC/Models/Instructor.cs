@@ -9,9 +9,8 @@ namespace StudentExercisesMVC.Models
     public class Instructor
     {
         [Required]
-        [MaxLength(50)]
         [Display(Name = "Instructor Id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [Required]
         [MaxLength(50)]
@@ -19,6 +18,7 @@ namespace StudentExercisesMVC.Models
         public string FirstName { get; set; }
 
         [Required]
+        [MaxLength(50)]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
