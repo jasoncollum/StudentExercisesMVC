@@ -12,17 +12,17 @@ namespace StudentExercisesMVC.Models
         public int? Id { get; set; }
 
         [Required]
-        [MaxLength(20)]
+        [MaxLength(50)]
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
 
         [Required]
-        [MaxLength(20)]
+        [MaxLength(50)]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
         [Required]
-        [MinLength(2)]
+        [MinLength(25)]
         [Display(Name = "Slack Handle")]
         public string SlackHandle { get; set; }
 
