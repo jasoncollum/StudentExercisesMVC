@@ -22,7 +22,7 @@ namespace StudentExercisesMVC.Models
         public string LastName { get; set; }
 
         [Required]
-        [MinLength(25)]
+        [MinLength(2)]
         [Display(Name = "Slack Handle")]
         public string SlackHandle { get; set; }
 
