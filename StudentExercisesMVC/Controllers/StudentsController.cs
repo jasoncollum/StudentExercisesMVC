@@ -165,7 +165,7 @@ namespace StudentExercisesMVC.Controllers
         {
             var student = GetOneStudent(id);
 
-            return View();
+            return View(student);
         }
 
         // POST: Students/Delete/5
@@ -175,7 +175,20 @@ namespace StudentExercisesMVC.Controllers
         {
             try
             {
-                // TODO: Add delete logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"DELETE FROM StudentExercise
+                                            WHERE InstructorId = @id;
+                                            DELETE FROM Student
+                                            WHERE Id = @id";
+                        cmd.Parameters.AddWithValue("@id", id);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
 
                 return RedirectToAction(nameof(Index));
             }
