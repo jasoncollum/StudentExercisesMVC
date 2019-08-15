@@ -118,46 +118,51 @@ namespace StudentExercisesMVC.Controllers
         {
             Instructor instructor = GetOneInstructor(id);
 
-            return View(instructor);
+            List<Cohort> cohorts = GetAllCohorts();
+
+            var viewModel = new InstructorEditViewModel(instructor, cohorts);
+
+            return View(viewModel);
         }
 
         // POST: Instructors/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(int id, InstructorEditViewModel model)
-        //{
-        //    try
-        //    {
-        //        using(SqlConnection conn = Connection)
-        //        {
-        //            conn.Open();
-        //            using(SqlCommand cmd = conn.CreateCommand())
-        //            {
-        //                cmd.CommandText = @"UPDATE Instructor
-        //                                    SET
-        //                                        FirstName = @firstName,
-        //                                        LastName = @lastName,
-        //                                        SlackHandle = @slackHandle,
-        //                                        Specialy = @specialty,
-        //                                        CohortId = @cohortId
-        //                                    ";
-        //                cmd.Parameters.Add(new SqlParameter("@firstName", model.Instructor.FirstName));
-        //                cmd.Parameters.Add(new SqlParameter("@lastName", model.Instructor.LastName));
-        //                cmd.Parameters.Add(new SqlParameter("@slackHandle", model.Instructor.SlackHandle));
-        //                cmd.Parameters.Add(new SqlParameter("@slackHandle", model.Instructor.Specialty));
-        //                cmd.Parameters.Add(new SqlParameter("@cohortId", model.Instructor.CohortId));
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, Instructor instructor)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Instructor
+                                            SET
+                                                FirstName = @firstName,
+                                                LastName = @lastName,
+                                                SlackHandle = @slackHandle,
+                                                Specialty = @specialty,
+                                                CohortId = @cohortId
+                                            WHERE Id = @id";
+                        cmd.Parameters.AddWithValue("@firstName", instructor.FirstName);
+                        cmd.Parameters.AddWithValue("@lastName", instructor.LastName);
+                        cmd.Parameters.AddWithValue("@slackHandle", instructor.SlackHandle);
+                        cmd.Parameters.AddWithValue("@specialty", instructor.Specialty);
+                        cmd.Parameters.AddWithValue("@cohortId", instructor.CohortId);
+                        cmd.Parameters.AddWithValue("@id", id);
 
-        //                cmd.ExecuteNonQuery();
-        //            }
-        //        }
+                        cmd.ExecuteNonQuery();
+                    }
+                }
 
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
         // GET: Instructor/Delete/5
         public ActionResult Delete(int id)
@@ -180,10 +185,10 @@ namespace StudentExercisesMVC.Controllers
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
                         cmd.CommandText = @"DELETE FROM StudentExercise
-                                            WHERE InsructorId = @id;
+                                            WHERE InstructorId = @id;
                                             DELETE FROM Instructor
                                             WHERE Id = @id";
-                        cmd.Parameters.Add(new SqlParameter("@id", id));
+                        cmd.Parameters.AddWithValue("@id", id);
 
                         cmd.ExecuteNonQuery();
                     }
@@ -197,11 +202,11 @@ namespace StudentExercisesMVC.Controllers
             }
         }
 
-        public Instructor GetOneInstructor(int id)
+        private Instructor GetOneInstructor(int id)
         {
-            Instructor instructor = null;
             using (SqlConnection conn = Connection)
             {
+                Instructor instructor = null;
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
@@ -228,9 +233,35 @@ namespace StudentExercisesMVC.Controllers
                     }
                     reader.Close();
                 }
+                return instructor;
             }
+        }
 
-            return instructor;
+        private List<Cohort> GetAllCohorts()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT Id, Name FROM Cohort";
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    List<Cohort> cohorts = new List<Cohort>();
+                    while (reader.Read())
+                    {
+                        cohorts.Add(new Cohort
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                        });
+                    }
+
+                    reader.Close();
+
+                    return cohorts;
+                }
+            }
         }
     }
 }
